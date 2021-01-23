@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useFirestore } from "react-redux-firebase";
+import { useParams, useHistory } from "react-router-dom";
 
 const StudentForm = () => {
   const [Student, setStudent] = useState({
@@ -7,12 +8,14 @@ const StudentForm = () => {
     email: "",
     phone: "",
     address: "",
-    id: "",
+    rid: "",
   });
 
-  const { name, email, phone, address } = Student;
-
+  const firestore = useFirestore();
+  const { name, email, phone, address, rid } = Student;
+  let history = useHistory();
   const { id } = useParams();
+  const docRef = id ? firestore.collection("students").doc(id) : null;
 
   const handleChange = (e) => {
     const value = e.target.value;
@@ -21,15 +24,41 @@ const StudentForm = () => {
       [e.target.name]: value,
     });
   };
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
 
     if (id) {
+      await docRef.update({
+        ...Student,
+        updatedAt: firestore.FieldValue.serverTimestamp(),
+      });
     } else {
-      const { id } = Student;
+      firestore
+        .collection("students")
+        .add({ ...Student, createdAt: firestore.FieldValue.serverTimestamp() });
+    }
+    history.push("/");
+  };
+
+  const loadStudent = async () => {
+    try {
+      const result = await docRef.get();
+      if (result.exists) {
+        setStudent(result.data());
+      } else {
+        alert("There exists no student for that roll number");
+      }
+    } catch (error) {
+      console.log("error:", error);
     }
   };
-  console.log(id);
+
+  useEffect(() => {
+    if (id) {
+      loadStudent();
+    }
+  }, [id]);
+
   return (
     <div className="container">
       <div className="container-xl">
@@ -54,8 +83,8 @@ const StudentForm = () => {
                       <input
                         placeholder="Enter Roll Number"
                         className="form-control"
-                        name="id"
-                        value={id}
+                        name="rid"
+                        value={rid}
                         onChange={handleChange}
                       />
                     </div>

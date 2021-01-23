@@ -8,9 +8,32 @@ import {
   Nav,
   Container,
 } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
+import { useFirebase } from "react-redux-firebase";
+import { useSelector } from "react-redux";
 
 const NavbarComp = () => {
+  const user = useSelector((state) => state.firebase.auth.email);
+
+  const firebase = useFirebase();
+  let history = useHistory();
+  const signOut = async () => {
+    await firebase.logout();
+    history.push("/login");
+  };
+
+  const verifyEmail = async () => {
+    var user = await firebase.auth().currentUser;
+    user
+      .sendEmailVerification()
+      .then(function () {
+        alert("email has been sent to you");
+      })
+      .catch(function (error) {
+        console.log("verification failed", error);
+      });
+  };
+
   return (
     <>
       <Navbar className="navbar" variant="dark" bg="primary" expand="lg">
@@ -41,11 +64,13 @@ const NavbarComp = () => {
               </Link>
               <span className="navbar-text ml-3">Admin</span>
 
-              <NavDropdown title="User Name" id="basic-nav-dropdown">
+              <NavDropdown title={user} id="basic-nav-dropdown">
                 <NavDropdown.Item>Dashboard</NavDropdown.Item>
-                <NavDropdown.Item>Settings</NavDropdown.Item>
+                <NavDropdown.Item onClick={verifyEmail}>
+                  Verify Email
+                </NavDropdown.Item>
                 <NavDropdown.Divider />
-                <NavDropdown.Item>Sign Out</NavDropdown.Item>
+                <NavDropdown.Item onClick={signOut}>Sign Out</NavDropdown.Item>
               </NavDropdown>
             </Nav>
           </Navbar.Collapse>

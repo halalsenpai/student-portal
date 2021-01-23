@@ -1,9 +1,40 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Card } from "react-bootstrap";
 import { Link, useParams } from "react-router-dom";
+import { useFirestore } from "react-redux-firebase";
 
 const Student = () => {
+  const firestore = useFirestore();
   const { id } = useParams();
+  const [student, setstudent] = useState(null);
+
+  const loadStudent = async () => {
+    try {
+      const docRef = firestore.collection("students").doc(id);
+      const result = await docRef.get();
+      if (result.exists) {
+        setstudent(result.data());
+      } else {
+        alert("There exists no student for that roll number");
+      }
+    } catch (error) {
+      console.log("error:", error);
+    }
+  };
+
+  useEffect(() => {
+    loadStudent();
+  }, []);
+
+  if (!student) {
+    return (
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border mt-5 text-light" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="container py-4">
       <Card>
@@ -19,12 +50,12 @@ const Student = () => {
           </div>
           <div className=" col-md-5 col-lg-6">
             <div className="card-body shadow-sm">
-              <h2>Student Name</h2>
-              <h2 className="user-select-all">Roll Number</h2>
+              <h2>{student.name}</h2>
+              <h2 className="user-select-all">{student.rid}</h2>
               <hr />
-              <h3>Email</h3>
-              <h3>Contact</h3>
-              <h3>Address</h3>
+              <h3>{student.email}</h3>
+              <h3>{student.phone}</h3>
+              <h3>{student.address}</h3>
             </div>
           </div>
           <div className="col-md-3 col-lg-2 ">
