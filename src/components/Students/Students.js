@@ -15,7 +15,7 @@ const Students = () => {
                     <h5 className="card-title mb-0">Student Name</h5>
                     <p className="text-muted small">Student Roll No.</p>
                     <img
-                      src="https://placeimg.com/200/200/people"
+                      src={`https://i.pravatar.cc/150?img=${index}`}
                       alt="avatar"
                       style={{ borderRadius: "200px" }}
                       width="70%"

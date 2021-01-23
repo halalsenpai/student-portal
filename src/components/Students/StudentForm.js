@@ -7,16 +7,28 @@ const StudentForm = () => {
     email: "",
     phone: "",
     address: "",
-    id: "bitch",
+    id: "",
   });
 
   const { name, email, phone, address } = Student;
 
   const { id } = useParams();
-  if (id == null) {
-    const { id } = Student;
-  }
 
+  const handleChange = (e) => {
+    const value = e.target.value;
+    setStudent({
+      ...Student,
+      [e.target.name]: value,
+    });
+  };
+  const submit = (e) => {
+    e.preventDefault();
+
+    if (id) {
+    } else {
+      const { id } = Student;
+    }
+  };
   console.log(id);
   return (
     <div className="container">
@@ -26,7 +38,7 @@ const StudentForm = () => {
             <div className="card shadow col-md-12">
               <h1 className="card-header">Student Details</h1>
               <div className="card-body">
-                <form>
+                <form onSubmit={submit}>
                   <div className="form-row  ">
                     <div className="col-md-6  mb-4">
                       <input
@@ -35,6 +47,7 @@ const StudentForm = () => {
                         placeholder="Enter Name"
                         name="name"
                         value={name}
+                        onChange={handleChange}
                       />
                     </div>
                     <div className="col-md-6  mb-4">
@@ -43,6 +56,7 @@ const StudentForm = () => {
                         className="form-control"
                         name="id"
                         value={id}
+                        onChange={handleChange}
                       />
                     </div>
                   </div>
@@ -54,6 +68,7 @@ const StudentForm = () => {
                         className="form-control"
                         name="phone"
                         value={phone}
+                        onChange={handleChange}
                       />
                     </div>
                     <div className="col-md-6  mb-4">
@@ -61,8 +76,9 @@ const StudentForm = () => {
                         type="email"
                         placeholder="Enter Email"
                         className="form-control"
-                        name="standard"
+                        name="email"
                         value={email}
+                        onChange={handleChange}
                       />
                     </div>
                   </div>
@@ -72,8 +88,9 @@ const StudentForm = () => {
                         type="text"
                         className="form-control"
                         placeholder="Enter Address"
-                        name="address1"
+                        name="address"
                         value={address}
+                        onChange={handleChange}
                       />
                     </div>
                   </div>

@@ -11,7 +11,7 @@ const Student = () => {
         <div className="row p-4">
           <div className="col-md-4 ">
             <img
-              src="https://placeimg.com/200/200/people"
+              src={`https://i.pravatar.cc/150?img=${id}`}
               alt="avatar"
               style={{ width: "100%" }}
               className="mb-3"
